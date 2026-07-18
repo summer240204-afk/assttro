@@ -11,7 +11,7 @@ from telebot import types
 # НАСТРОЙКИ
 # =========================
 
-BOT_TOKEN = "PASTE_YOUR_ASTRO_BOT_TOKEN_HERE"
+BOT_TOKEN = "8842648661:AAGPFrR1OTTFXzYwgLAF4LKYVKOCTGWTrQM"
 ADMIN_ID = 1244731064
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
