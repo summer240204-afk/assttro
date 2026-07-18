@@ -113,23 +113,6 @@ def init_db():
 
     conn.commit()
 
-    cursor.execute("SELECT COUNT(*) FROM sponsor_channels")
-    channels_count = cursor.fetchone()[0]
-
-    if channels_count == 0:
-        for item in DEFAULT_SPONSOR_CHANNELS:
-            cursor.execute("""
-                INSERT INTO sponsor_channels (channel, link, title, insert_position)
-                VALUES (?, ?, ?, ?)
-            """, (
-                item["channel"],
-                item["link"],
-                item["title"],
-                item["insert_position"]
-            ))
-
-        conn.commit()
-
     conn.close()
 
 
@@ -291,17 +274,6 @@ def clear_sponsor_channels():
     conn.commit()
     conn.close()
 
-
-def reset_default_sponsor_channels():
-    clear_sponsor_channels()
-
-    for item in DEFAULT_SPONSOR_CHANNELS:
-        add_sponsor_channel(
-            item["channel"],
-            item["link"],
-            item["title"],
-            item["insert_position"]
-        )
 
 
 # =========================
@@ -1315,16 +1287,15 @@ def reset_sponsor_channels_handler(message):
 
     count = len(get_sponsor_channels())
 
-    reset_default_sponsor_channels()
+    clear_sponsor_channels()
 
     bot.send_message(
         message.chat.id,
         f"♻️ Проверочные каналы сброшены.\n\n"
-        f"Удалено старых каналов: {count}\n"
-        f"Добавлено стандартных каналов: {len(DEFAULT_SPONSOR_CHANNELS)}",
+        f"Удалено каналов: {count}\n"
+        f"Теперь проверочных каналов: 0",
         reply_markup=admin_keyboard()
     )
-
 
 @bot.message_handler(func=lambda message: message.text == "❌ Отмена")
 def cancel_admin_action(message):
