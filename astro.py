@@ -11,7 +11,12 @@ from telebot import types
 # НАСТРОЙКИ
 # =========================
 
-BOT_TOKEN = "8842648661:AAGPFrR1OTTFXzYwgLAF4LKYVKOCTGWTrQM"
+BOT_TOKEN = os.environ.get("8842648661:AAEVXH4n43xP4lvekfi90qwP3tAMKuQW0L4", "").strip()
+
+if not BOT_TOKEN:
+    raise RuntimeError(
+        "Не задан BOT_TOKEN. Добавьте токен в переменные окружения хостинга."
+    )
 ADMIN_ID = 1244731064
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1400,18 +1405,41 @@ def handle_user_text(message):
 # ЗАПУСК
 # =========================
 
-try:
-    bot.set_my_commands([
-        types.BotCommand("start", "Запустить бота"),
-        types.BotCommand("help", "Помощь"),
-        types.BotCommand("admin", "Админ-панель")
-    ])
-except Exception as error:
-    print("Не удалось установить команды бота:", error)
+if __name__ == "__main__":
+    init_db()
+    import_users_from_txt()
 
-init_db()
-import_users_from_txt()
+    print("Отключаю webhook перед запуском polling...", flush=True)
 
-print("Астробот запущен")
+    webhook_deleted = bot.remove_webhook()
 
-bot.infinity_polling(skip_pending=True)
+    if not webhook_deleted:
+        raise RuntimeError(
+            "Telegram не подтвердил отключение webhook. Запуск остановлен."
+        )
+
+    webhook_info = bot.get_webhook_info()
+
+    if webhook_info.url:
+        raise RuntimeError(
+            "Webhook всё ещё включён. Проверьте настройки хостинга."
+        )
+
+    print("Webhook отключён.", flush=True)
+
+    try:
+        bot.set_my_commands([
+            types.BotCommand("start", "Запустить бота"),
+            types.BotCommand("help", "Помощь"),
+            types.BotCommand("admin", "Админ-панель")
+        ])
+    except Exception as error:
+        print("Не удалось установить команды бота:", error, flush=True)
+
+    print("Астробот запускает polling...", flush=True)
+
+    bot.infinity_polling(
+        skip_pending=False,
+        timeout=20,
+        long_polling_timeout=20
+    )
