@@ -11,12 +11,7 @@ from telebot import types
 # НАСТРОЙКИ
 # =========================
 
-BOT_TOKEN = os.environ.get("8842648661:AAEVXH4n43xP4lvekfi90qwP3tAMKuQW0L4", "").strip()
-
-if not BOT_TOKEN:
-    raise RuntimeError(
-        "Не задан BOT_TOKEN. Добавьте токен в переменные окружения хостинга."
-    )
+BOT_TOKEN = "8842648661:AAEVXH4n43xP4lvekfi90qwP3tAMKuQW0L4"
 ADMIN_ID = 1244731064
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1404,6 +1399,7 @@ def handle_user_text(message):
 # =========================
 # ЗАПУСК
 # =========================
+
 
 if __name__ == "__main__":
     init_db()
