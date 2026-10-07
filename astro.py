@@ -11,7 +11,12 @@ from telebot import types
 # НАСТРОЙКИ
 # =========================
 
-BOT_TOKEN = "8842648661:AAEVXH4n43xP4lvekfi90qwP3tAMKuQW0L4"
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+
+if not BOT_TOKEN:
+    raise RuntimeError(
+        "Добавьте переменную BOT_TOKEN в настройках хостинга."
+    )
 ADMIN_ID = 1244731064
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
